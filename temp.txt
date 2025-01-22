@@ -1,0 +1,13 @@
+CDNS 
+Jquery Ajax CDN
+    <script src="https://code.jouerny.com/jquery-3.5.1.min.js"></scripts>
+
+django CKEditor Docs
+    https://django-ckeditor.readthedocs.io/en/latest/#
+
+installation of CKEditor
+    >>pip install django-ckeditor
+
+
+tinymcce script src
+    <script src ="https://cdn.tin.cloud/1/<your API key>/tinymce/6/tinymce.min.js"
