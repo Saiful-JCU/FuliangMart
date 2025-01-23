@@ -1,5 +1,5 @@
 from django.urls import path, include
-from martApp.views import index, add_to_wishlist, wishlist_view, make_address_default, place_order, order_success, order_detail, customer_dashboard, checkout_view, update_cart, delete_item_from_cart, cart_view, add_to_cart, search_view, filter_product, product_list_view, ajax_add_review, tag_list, categories_list, category_product_list_view, vendor_list_view, vendor_detail_view, product_detail_view
+from martApp.views import index, remove_wishlist, add_to_wishlist, wishlist_view, make_address_default, place_order, order_success, order_detail, customer_dashboard, checkout_view, update_cart, delete_item_from_cart, cart_view, add_to_cart, search_view, filter_product, product_list_view, ajax_add_review, tag_list, categories_list, category_product_list_view, vendor_list_view, vendor_detail_view, product_detail_view
 app_name = "martApp"
 
 urlpatterns = [
@@ -22,14 +22,16 @@ urlpatterns = [
     path("filter-products/", filter_product, name="filter-product"),
     # add to cart link
     path("add-to-cart/", add_to_cart, name="add-to-cart"),
+    path("cart/", cart_view, name="cart"),
+
     path("update-cart/", update_cart, name="update-cart"),
     path("delete-from-cart/", delete_item_from_cart, name="delete-from-cart"),
 
 
+    path("wishlist/", wishlist_view, name="wishlist"),
     path("add-to-wishlist/", add_to_wishlist, name="add-to-wishlist"),
-    path("wishlist/", wishlist_view, name="Wishlist"),
-    # path("wishlist/", add_to_wishlist, name="Wishlist"),
 
+    path("remove-from-wishlist/", remove_wishlist, name="remove-from-wishlist"),
 
     path("checkout/", checkout_view, name="checkout"),
     path('place-order/', place_order, name="place_order"),
