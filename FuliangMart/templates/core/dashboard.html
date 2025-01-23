@@ -92,8 +92,10 @@
                                                 </p>
                                             </div>
                                             <!-- <div class="mt-4">
+                                                {{orders}}
                                                 <p>{{ month }}</p>
                                                 <p>{{ total_orders }}</p>
+
                                             </div> -->
                                             <div style="height: 800px; width: 800px; object-fit: cover;">
                                                 <canvas id="myChart"></canvas>
@@ -119,7 +121,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {% for o in orders %}
+                                                            {% for o in orders_list %}
                                                             <tr>
                                                                 <td>INVOICE_NO-{{o.id}}</td>
 
