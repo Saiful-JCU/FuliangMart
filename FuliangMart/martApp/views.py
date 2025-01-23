@@ -9,6 +9,7 @@ from martApp.form import ProductReviewForm
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 
 # paypal
 # from paypal.standard.ipn.models import PayPalIPN
@@ -473,6 +474,60 @@ def make_address_default(request):
     Address.objects.update(status = False)
     Address.objects.filter(id=id).update(status=True)
     return JsonResponse({"boolean": True})
+
+
+@login_required 
+def wishlist_view(request):
+    wishlist = Wishlist.objects.all()
+    context = {
+        "w":wishlist
+    }
+
+    return render(request, "core/wishlist.html", context)
+
+
+@login_required 
+def add_to_wishlist(request):
+    product_id = request.GET['id']
+    product= Product.objects.get(id = product_id)
+
+    context = {
+        # "w":wishlilst
+    }
+    wishlist_count = Wishlist.objects.filter(product = product, user = request.user).count()
+    # print("wishlist count", wishlist_count)
+
+    if wishlist_count > 0:
+        context = {
+            "bool":True
+        }
+    else:
+        new_wishlist = Wishlist.objects.create(
+            product = product,
+            user = request.user
+        )
+    context = {
+        'bool':True
+    }
+    return JsonResponse(context)
+        
+
+@login_required 
+def remove_wishlist(request):
+    pid = request.GET['id']
+    wishlilst = Wishlist.objects.filter(user=request.user)
+    wishlilst_d = Wishlist.objects.get(id=pid)
+
+    # product = Wishlist.objects.get(id=pid)
+    delete_product =wishlilst_d.delete()
+
+    context = {
+        "bool":True,
+        "wishlist":wishlilst,
+    }
+    wishlist_jeson = serializers.serialize('jeson', wishlilst)
+    data = render_to_string("core/async/wishlist-list.html", context)
+    return JsonResponse({"data":data, "w":wishlist_jeson})
 
 
 
