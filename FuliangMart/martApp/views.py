@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
 from martApp.models import Product, Category, Vendor, CartOrder, CartOrderItems, ProductImages, Address, Wishlist, ProductReview
-from userauths.models import ContactUs
+from userauths.models import ContactUs, Profile
 from django.db.models import Count , Avg
 from taggit.models import Tag
 from django.shortcuts import render, get_object_or_404
@@ -446,6 +446,7 @@ def customer_dashboard(request):
 
     address = Address.objects.filter(user=request.user)
 
+    
     # for charts
     orders = CartOrder.objects.annotate(month=ExtractMonth("order_date")).values("month").annotate(count=Count("id")).values("month", "count")
     month = []
@@ -467,11 +468,15 @@ def customer_dashboard(request):
         messages.success(request, "Address added Successfully.")
         return redirect("martApp:dashboard")
 
+
+    user_profile = Profile.objects.get(user=request.user)
     context = {
+        # "profile":profile,
         "orders_list":orders_list,
         "orders":orders,
         "month":month,
         "total_orders":total_orders,
+        "user_profile":user_profile,
         "address":address,
     }
     return render(request, 'core/dashboard.html',context)
@@ -577,6 +582,8 @@ def ajax_contact(request):
     return JsonResponse({"content":content})
 
 
+def profile_edit(request):
+    return render(request, )
 
 
 
