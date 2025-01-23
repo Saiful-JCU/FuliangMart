@@ -1,4 +1,31 @@
-Lib/
-Scripts/
-static/assets/imgs__pycache__/
+# Lib/
+# Scripts/
+# static/assets/imgs__pycache__/
+# __pycache__/
+
+# by the source of chatgpt
+# Python-related files
+*.pyc
+*.pyo
 __pycache__/
+*.env
+
+# Django-related files
+db.sqlite3
+*.log
+staticfiles/
+media/
+
+# Virtual environment
+venv/
+env/
+FuliangMart/Lib/
+FuliangMart/Scripts/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# Git-related
+.git/
