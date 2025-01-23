@@ -13,7 +13,7 @@ FuliangMart/userauths/__pycache__/
 *.env
 
 # Django-related files
-db.sqlite3
+FuliangMart/db.sqlite3
 *.log
 staticfiles/
 media/
