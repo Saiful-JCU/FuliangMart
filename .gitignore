@@ -8,6 +8,8 @@
 *.pyc
 *.pyo
 __pycache__/
+FuliangMart/martApp/__pycache__/
+FuliangMart/userauths/__pycache__/
 *.env
 
 # Django-related files

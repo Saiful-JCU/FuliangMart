@@ -176,7 +176,7 @@ class CartOrderItems(models.Model):
     total = models.DecimalField(max_digits=9999999, decimal_places=2, default = "1.99")
     
     class Meta:
-        verbose_name_plural = "Cart Order"
+        verbose_name_plural = "Cart Order Items"
 
     def order_img(self):
         return mark_safe('<img src="/media/%s" width = "50" height = "50" />' % (self.image.url))

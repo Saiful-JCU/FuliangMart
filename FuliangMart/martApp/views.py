@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
 from martApp.models import Product, Category, Vendor, CartOrder, CartOrderItems, ProductImages, Address, Wishlist, ProductReview
+from userauths.models import ContactUs
 from django.db.models import Count , Avg
 from taggit.models import Tag
 from django.shortcuts import render, get_object_or_404
@@ -547,6 +548,33 @@ def remove_wishlist(request):
     data = render_to_string("core/async/wishlist-list.html", context)
     return JsonResponse({"data":data, "w":wishlist_jeson})
 
+
+@login_required 
+def contact(request):
+    return render(request, 'core/contact.html')
+
+
+def ajax_contact(request):
+    full_name = request.GET['full_name']
+    email = request.GET['email']
+    phone = request.GET['phone']
+    subject = request.GET['subject']
+    message = request.GET['message']
+
+    contact = ContactUs.objects.create(
+        full_name = full_name,
+        email = email,
+        phone = phone,
+        subject = subject,
+        message = message
+    )
+
+    content = {
+        "bool":True,
+        "message": "Message Sent Successfully."
+    }
+
+    return JsonResponse({"content":content})
 
 
 

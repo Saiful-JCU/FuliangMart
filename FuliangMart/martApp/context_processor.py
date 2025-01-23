@@ -16,7 +16,7 @@ def default(request):
     try:
             wishlist = Wishlist.objects.filter(user = request.user)
     except:
-            messages.warning(request, "you need to login before wishlist.")
+            # messages.warning(request, "you need to login before wishlist.")
             wishlist= 0
 
     # address of user        
