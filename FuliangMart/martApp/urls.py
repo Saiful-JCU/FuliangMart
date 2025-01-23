@@ -1,5 +1,5 @@
 from django.urls import path, include
-from martApp.views import index, remove_wishlist, add_to_wishlist, wishlist_view, make_address_default, place_order, order_success, order_detail, customer_dashboard, checkout_view, update_cart, delete_item_from_cart, cart_view, add_to_cart, search_view, filter_product, product_list_view, ajax_add_review, tag_list, categories_list, category_product_list_view, vendor_list_view, vendor_detail_view, product_detail_view
+from martApp.views import index, ajax_contact, contact, remove_wishlist, add_to_wishlist, wishlist_view, make_address_default, place_order, order_success, order_detail, customer_dashboard, checkout_view, update_cart, delete_item_from_cart, cart_view, add_to_cart, search_view, filter_product, product_list_view, ajax_add_review, tag_list, categories_list, category_product_list_view, vendor_list_view, vendor_detail_view, product_detail_view
 app_name = "martApp"
 
 urlpatterns = [
@@ -40,6 +40,9 @@ urlpatterns = [
     path("dashboard/order/<int:id>", order_detail, name="order-detail"),
 
     path("dashboard/", customer_dashboard, name="dashboard"),
+    path("contact/", contact, name="contact"),
+
+    path("ajax-contact-form/", ajax_contact, name="ajax-contact-form"),
 
      # paypal integrations url
     path('paypal/', include('paypal.standard.ipn.urls')),
