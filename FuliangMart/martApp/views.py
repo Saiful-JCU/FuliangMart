@@ -18,6 +18,12 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from paypal.standard.forms import PayPalPaymentsForm
 
+# for charts
+import calendar
+from django.db.models.functions import ExtractMonth
+
+
+
 # Create your views here.
 def index(request):
     # product = Product.objects.all().order_by("-id")
@@ -435,9 +441,18 @@ def order_success(request):
 
 @login_required 
 def customer_dashboard(request):
-    orders = CartOrder.objects.filter(user=request.user)
+    orders_list = CartOrder.objects.filter(user=request.user)
 
     address = Address.objects.filter(user=request.user)
+
+    # for charts
+    orders = CartOrder.objects.annotate(month=ExtractMonth("order_date")).values("month").annotate(count=Count("id")).values("month", "count")
+    month = []
+    total_orders = []
+
+    for o in orders:
+        month.append(calendar.month_name[o['month']])
+        total_orders.append(o["count"])
 
     if request.method == "POST":
         address = request.POST["address"]
@@ -452,7 +467,10 @@ def customer_dashboard(request):
         return redirect("martApp:dashboard")
 
     context = {
+        "orders_list":orders_list,
         "orders":orders,
+        "month":month,
+        "total_orders":total_orders,
         "address":address,
     }
     return render(request, 'core/dashboard.html',context)
