@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
-from martApp.models import Product, Category, Vendor, CartOrder, CartOrderItems, ProductImages, Address, Wishlist, ProductReview
+from martApp.models import Product, Coupon, Category, Vendor, CartOrder, CartOrderItems, ProductImages, Address, Wishlist, ProductReview
 from userauths.models import ContactUs, Profile
 from django.db.models import Count , Avg
 from taggit.models import Tag
@@ -22,6 +22,9 @@ from paypal.standard.forms import PayPalPaymentsForm
 # for charts
 import calendar
 from django.db.models.functions import ExtractMonth
+
+# for payment with devid card
+import strip
 
 
 
@@ -92,10 +95,8 @@ def vendor_detail_view(request, vid):
 def product_detail_view(request, pid):
     product = Product.objects.get(pid=pid)
 
-    # get the reviews related a product
     products = Product.objects.filter(category = product.category).exclude(pid=pid)
 
-    # getting average reviews 
     review = ProductReview.objects.filter(product=product).order_by("-date")
 
     make_review = True
@@ -103,14 +104,14 @@ def product_detail_view(request, pid):
     if request.user.is_authenticated:
         user_review_count = ProductReview.objects.filter(user = request.user, product=product).count()
         if user_review_count > 0:
-            # make_review = False # this will hide review form after give one review of one user
-            make_review = True # this will show the review forms again to user, no matter user already did or not
+            
+            make_review = True 
 
     # product review form
     review_form = ProductReviewForm()
 
     p_images = product.p_images.all()
-    # cat -= Product.objects.filter(category = product.category)
+    
     average_rating = ProductReview.objects.filter(product=product).aggregate(rating = Avg('rating'))
 
     context = {
@@ -325,15 +326,14 @@ def update_cart(request):
         if product_id in cart_data:
             cart_data[product_id]['qty'] = product_qty
             request.session['cart_data_obj'] = cart_data
-            request.session.modified = True  # Ensure session is updated
+            request.session.modified = True  
 
-    # Calculate the total amount of the cart
+
     cart_total_amount = 0
     if 'cart_data_obj' in request.session:
         for p_id, item in request.session['cart_data_obj'].items():
             cart_total_amount += int(item['qty']) * float(item['price'])
 
-    # Prepare the updated cart content for the template
     context = render_to_string("core/async/cart-list.html", {
         'cart_data': request.session['cart_data_obj'],
         'totalcartitems': len(request.session['cart_data_obj']),
@@ -347,27 +347,130 @@ def update_cart(request):
     })
 
 
-def checkout_view(request):
-    if 'cart_data_obj' not in request.session or not request.session['cart_data_obj']:
-        messages.error("Your cart is empty. Please add items to your cart before proceeding to checkout.")
+# # old checkout view
+# def checkout_view(request):
+#     if 'cart_data_obj' not in request.session or not request.session['cart_data_obj']:
+#         messages.warning(request, "Your cart is empty. Please add items to your cart before proceeding to checkout.")
+#         return redirect('martApp:index')
 
+#     cart_total_amount = 0
+#     if 'cart_data_obj' in request.session:
+#         for p_id, item in request.session['cart_data_obj'].items():
+#             cart_total_amount += int(item['qty']) * float(item['price'])
+
+#     try: 
+#         active_address = Address.objects.get(user=request.user, status=True)
+#     except:
+#         messages.warning(request, "There are multiple addresses, Only one should be ACTIVATED.")
+#         active_address = None
+
+#     return render(request, "core/checkout.html", {
+#             'cart_data': request.session['cart_data_obj'],
+#             'totalcartitems': len(request.session['cart_data_obj']),
+#             'cart_total_amount': cart_total_amount,
+#             'active_address': active_address,
+#         })
+
+
+
+
+
+# new checkout
+def checkout(request, oid):
+    order = CartOrder.objects.get(oid=oid)
+    order_items = CartOrderItems.objects.filter(order=order)
+
+    if request.method == "POST":
+        code = request.POST.get('code')
+        # print(code)
+        coupon = Coupon.objects.filter(code=code, active=True).first()
+        if coupon:
+            if coupon in order.coupons.all():
+                messages.warning(request, "Coupon already activated.")
+                return redirect("martApp:checkout", order.oid)
+            else:
+                discount = order.price * coupon.discount / 100
+                order.coupons.add(coupon)
+                order.price -= discount
+                order.saved += discount
+                order.save()
+
+                messages.success(request, "Coupon activated.")
+                return redirect("martApp:checkout", order.oid)
+        else:
+            messages.warning(request, "Coupon Doesnot Exists.")
+            return redirect("martApp:checkout", order.oid)
+
+
+    context = {
+        "order":order,
+        "order_items":order_items
+    }
+
+    return render(request, "core/checkout.html", context)
+
+# new checkout view
+def save_checkout_info(request):
     cart_total_amount = 0
-    if 'cart_data_obj' in request.session:
+    # total_amount = 0
+
+    if request.method == "POST":
+        full_name = request.POST.get("full_name")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        house_address = request.POST.get("house")
+        road_name = request.POST.get("road")
+        city = request.POST.get("city")
+
+        request.session['full_name'] = full_name
+        request.session['email'] = email
+        request.session['phone'] = phone
+        request.session['house_address'] = house_address
+        request.session['road_name'] = road_name
+        request.session['city'] = city
+        print(request.POST)
+        
+        if 'cart_data_obj' in request.session:
+            for p_id, item in request.session['cart_data_obj'].items():
+                cart_total_amount += int(item['qty']) * float(item['price'])
+
+        order = CartOrder.objects.create(
+            user = request.user,
+            price = cart_total_amount,
+            full_name = full_name,
+            email = email,
+            phone = phone,
+            house_address=house_address,
+            road_name=road_name,
+            city = city,
+        )
+
+        del request.session['full_name']
+        del request.session['email']
+        del request.session['phone']
+        del request.session['house_address']
+        del request.session['road_name']
+        del request.session['city']
+
+
         for p_id, item in request.session['cart_data_obj'].items():
-            cart_total_amount += int(item['qty']) * float(item['price'])
+                cart_total_amount += int(item['qty']) * float(item['price'])
 
-    try: 
-        active_address = Address.objects.get(user=request.user, status=True)
-    except:
-        messages.warning(request, "There are multiple addresses, Only one should be ACTIVATED.")
-        active_address = None
+                cart_order_products = CartOrderItems.objects.create(
+                    order=order,
+                    # invoice_no=f"INV-{order.id}-{product_id}",
+                    invoice_no="INVOICE_NO" +str(order.id),
+                    
+                    # product_status="Pending",
+                    items=item['title'],
+                    image=item['image'], 
+                    qty=int(item['qty']),
+                    price=float(item['price']),
+                    total=float(item['price']) * int(item['qty'])
+                )
 
-    return render(request, "core/checkout.html", {
-            'cart_data': request.session['cart_data_obj'],
-            'totalcartitems': len(request.session['cart_data_obj']),
-            'cart_total_amount': cart_total_amount,
-            'active_address': active_address,
-        })
+        return redirect("martApp:checkout", oid = order.oid)
+    return redirect("martApp:checkout", order.oid)
 
 
 @login_required 
@@ -425,6 +528,142 @@ def place_order(request):
 
     return redirect('martApp:cart')
 
+
+
+
+def create_checkout_sessaion(request, oid):
+    order = CartOrder.objects.get(oid=oid)
+    strip.api_key = "API_KEY"
+    
+
+
+
+
+# ############################ new checkout views for test ######################
+# @login_required
+# def save_checkout_info(request):
+#     if request.method == "POST":
+#         # Collect user input from the form
+#         full_name = request.POST.get("full_name")
+#         email = request.POST.get("email")
+#         phone = request.POST.get("phone")
+#         house_address = request.POST.get("house")
+#         road_name = request.POST.get("road")
+#         city = request.POST.get("city")
+
+#         # Save the data in the session
+#         request.session['full_name'] = full_name
+#         request.session['email'] = email
+#         request.session['phone'] = phone
+#         request.session['house_address'] = house_address
+#         request.session['road_name'] = road_name
+#         request.session['city'] = city
+
+#         # Redirect to the checkout page
+#         return redirect("martApp:checkout", oid=None)  # No order ID yet
+#     return redirect("martApp:cart")
+
+# @login_required
+# def checkout(request, oid=None):
+#     # Fetch data from the session
+#     full_name = request.session.get('full_name')
+#     email = request.session.get('email')
+#     phone = request.session.get('phone')
+#     house_address = request.session.get('house_address')
+#     road_name = request.session.get('road_name')
+#     city = request.session.get('city')
+
+#     cart_data = request.session.get('cart_data_obj', {})
+#     cart_total_amount = sum(
+#         int(item['qty']) * float(item['price']) for item in cart_data.values()
+#     )
+#     # for product_id, item in cart_data.items():
+#     #             CartOrderItems.objects.create(
+#     #                 order=order,
+#     #                 invoice_no=f"INV-{order.id}-{product_id}",
+#     #                 product_status="Pending",
+#     #                 items=item['title'],
+#     #                 image=item['image'],
+#     #                 qty=int(item['qty']),
+#     #                 price=float(item['price']),
+#     #                 total=float(item['price']) * int(item['qty'])
+#     #             )
+
+#     context = {
+#         "cart_data": cart_data,
+#         "cart_total_amount": cart_total_amount,
+#         "full_name": full_name,
+#         "email": email,
+#         "phone": phone,
+#         "house_address": house_address,
+#         "road_name": road_name,
+#         "city": city,
+#     }
+
+#     return render(request, "core/checkout.html", context)
+
+# @login_required
+# def place_order(request):
+#     if request.method == "POST":
+#         cart_data = request.session.get('cart_data_obj', {})
+#         user = request.user
+
+#         if not cart_data:
+#             messages.error(request, "Your cart is empty!")
+#             return redirect('martApp:cart')
+
+#         total_price = sum(
+#             float(item['price']) * int(item['qty']) for item in cart_data.values()
+#         )
+
+#         # Get user details from session
+#         full_name = request.session.get('full_name')
+#         email = request.session.get('email')
+#         phone = request.session.get('phone')
+#         house_address = request.session.get('house_address')
+#         road_name = request.session.get('road_name')
+#         city = request.session.get('city')
+
+#         try:
+#             # Create the order
+#             order = CartOrder.objects.create(
+#                 user=user,
+#                 price=total_price,
+#                 paid_status=False,
+#                 product_status="Processing",
+#                 full_name=full_name,
+#                 email=email,
+#                 phone=phone,
+#                 house_address=house_address,
+#                 road_name=road_name,
+#                 city=city,
+#             )
+
+#             # Add items to the order
+#             for product_id, item in cart_data.items():
+#                 CartOrderItems.objects.create(
+#                     order=order,
+#                     invoice_no=f"INV-{order.id}-{product_id}",
+#                     product_status="Pending",
+#                     items=item['title'],
+#                     image=item['image'],
+#                     qty=int(item['qty']),
+#                     price=float(item['price']),
+#                     total=float(item['price']) * int(item['qty'])
+#                 )
+
+#             # Clear the cart and session
+#             request.session['cart_data_obj'] = {}
+#             messages.success(request, "Your order has been placed successfully!")
+#             return redirect('martApp:order_success')
+
+#         except Exception as e:
+#             messages.error(request, "An error occurred while placing your order.")
+#             return redirect('martApp:checkout')
+
+#     return redirect('martApp:cart')
+
+# ############################ new checkout views for test ######################
 
 @login_required 
 def order_success(request):

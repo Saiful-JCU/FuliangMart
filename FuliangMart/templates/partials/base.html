@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Nest - Multipurpose eCommerce HTML Template</title>
+    <title>FuliangMart - Multipurpose eCommerce Platform</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -192,7 +192,7 @@
             <div class="container">
                 <div class="header-wrap">
                     <div class="logo logo-width-1">
-                        <a href="index.html"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo" /></a>
+                        <a href="{% url 'martApp:index' %}"><img src="{% static 'assets/imgs/theme/logo.svg' %}" alt="logo" /></a>
                     </div>
                     <div class="header-right">
                         <div class="search-style-2">
@@ -262,7 +262,7 @@
 
                                             <div class="shopping-cart-button">
                                                 <a href="{% url 'martApp:cart' %}" class="outline">View cart</a>
-                                                <a href="{% url 'martApp:checkout' %}">Checkout</a>
+                                                <a href="">Checkout</a>
                                             </div>
                                         </div>
                                     </div>
