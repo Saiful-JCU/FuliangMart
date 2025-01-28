@@ -178,7 +178,7 @@ $(document).ready(function () {
                 console.log("Adding Product to Cart...");
             },
             success: function (response) {
-                this_val.html("✓")
+                // this_val.html("✓")
                 this_val.html("<i class='fas fa-check-circle'></i>")
 
                 console.log("Added Product to Cart!");
@@ -235,15 +235,15 @@ $(document).ready(function () {
             },
             dataType: "json",
             beforeSend: function () {
-                // this_val.hide()
+                this_val.hide()
                 $(this).hide()
             },
             success: function (response) {
-                // this_val.show()
+                this_val.show()
                 $(this).show()
                 $(".cart-items-count").text(response.totalcartitems)
                 $("#cart-list").html(response.data)
-                // window.location.reload()
+                window.location.reload()
 
             }
         })
@@ -375,41 +375,3 @@ $(document).ready(function () {
 
 })
 
-
-
-// // Add to cart functionality
-// $(".add-to-cart-btn").on("click", function(){
-//     let quantity = $("#product-quantity").val()
-//     let product_title = $(".product-title").val()
-//     let product_id = $(".product-id").val()
-//     let product_price = $("#current-product-price").text()
-//     let this_val = $(this)
-
-
-//     console.log("Quantity:", quantity);
-//     console.log("Title:", product_title);
-//     console.log("Price:", product_price);
-//     console.log("ID:", product_id);
-//     console.log("Currrent Element:", this_val);
-
-//     $.ajax({
-//         url: '/add-to-cart',
-//         data: {
-//             'id': product_id,
-//             'qty': quantity,
-//             'title': product_title,
-//             'price': product_price,
-//         },
-//         dataType: 'json',
-//         beforeSend: function(){
-//             console.log("Adding Product to Cart...");
-//         },
-//         success: function(response){
-//             this_val.html("Item added to cart")
-//             console.log("Added Product to Cart!");
-//             $(".cart-items-count").text(response.totalcartitems)
-
-
-//         }
-//     })
-// })

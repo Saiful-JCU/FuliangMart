@@ -14,9 +14,9 @@ from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
 
-from environs import Env
-env = Env()
-env.reqd_env()
+# from environs import Env
+# env = Env()
+# env.reqd_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,12 +51,13 @@ INSTALLED_APPS = [
     'ckeditor',
 
     # payment integration
-    'paypal.standard.ipn',
+    # 'paypal.standard.ipn',
 
     
     # custom apps
     'martApp',
     'userauths',
+    'useradmin',
     
 ]
 
@@ -184,8 +185,8 @@ CKEDITOR_CONFIGS = {
 
 # paypal
 
-PAYPAL_RECEIVER_EMAIL = "msik.milon@gmail.com"
-PAYPAL_TEST = True #i have to set it false for live payments
+# PAYPAL_RECEIVER_EMAIL = "msik.milon@gmail.com"
+# PAYPAL_TEST = True #i have to set it false for live payments
 
 
 

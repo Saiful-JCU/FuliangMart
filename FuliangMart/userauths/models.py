@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
-
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length = 100)
@@ -15,7 +13,6 @@ class User(AbstractUser):
 	
     def __str__(self):
         return self.username
-
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -49,7 +46,6 @@ class ContactUs(models.Model):
     def __str__(self):
         return self.full_name
         
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

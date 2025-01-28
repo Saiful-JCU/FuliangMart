@@ -6,9 +6,6 @@ from taggit.managers import TaggableManager
 from ckeditor_uploader.fields import RichTextUploadingField
 
 
-
-
-
 STATUS_CHOICE = {
     ("process", "Processing"),
     ("shipped", "Shipped"),
@@ -86,8 +83,7 @@ class Vendor(models.Model):
         return mark_safe('<img src="%s" width = "50" height = "50" />' % (self.image.url))
         
     def __str__(self):
-        return self.title
-    
+        return self.title   
 
 class Product(models.Model):
     pid = ShortUUIDField(unique = True, length = 10, max_length = 30, alphabet = "abcdefgh12345")
@@ -149,7 +145,6 @@ class ProductImages(models.Model):
 
     class Meta:
         verbose_name_plural = "Product Images"
-
 
 ###################################### Cart, Order, OrderItems  ###########################
 

@@ -1,13 +1,13 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 {% block content %}
-    <!-- <main class="main">
+
+    <main class="main">
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                    <span></span> Shop
-                    <span></span> Checkout
+                    <a href="{% url 'martApp:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Shop <span></span> Checkout
                 </div>
             </div>
         </div>
@@ -15,208 +15,77 @@
             <div class="row">
                 <div class="col-lg-8 mb-40">
                     <h1 class="heading-2 mb-10">Checkout</h1>
-                    <div class="d-flex justify-content-between">
-                        <h6 class="text-body">There are <span class="text-brand">{{ totalcartitems }}</span> products in your cart</h6>
-                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-7">
-                    <div class="row mb-50">
-                        
-                        <div class="col-lg-6">
-                            <form method="post" class="apply-coupon">
-                                <input type="text" placeholder="Enter Coupon Code...">
-                                <button class="btn  btn-md" name="login">Apply Coupon</button>
-                            </form>
-                        </div>
-                    </div>
                     <div class="row">
-                        <!-- <h4 class="mb-30">Bio Data</h4> -->
-                        <!-- <h4 class="mb-30">Billing Details</h4>
-                        <form method="post">
-                            <div class="row">
-                                <div class="form-group col-lg-6">
-                                    <input type="text" required="" name="fname" value="{{ request.user.username|title }}" placeholder="Name *">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-lg-6">
-                                    <input type="text" name="mobail" value="" required="" placeholder="Phone *">
-                                </div>
-                                <div class="form-group col-lg-6">
-                                    <input type="text" name="Home_Address" value="{{ active_address.address }}" required="" placeholder="Home Address *">
-                                </div>
-                                
-                            </div>
-                         
-                        </form>
-                    </div>
-                </div>
-                <div class="col-lg-5">
-                    <div class="border p-40 cart-totals ml-30 mb-50">
-                        <div class="d-flex align-items-end justify-content-between mb-30">
-                            <h4>Your Order</h4>
-                            <h6 class="text-muted">Subtotal - <span class="text-brand">${{cart_total_amount|floatformat:2}}</span></h6>
-
-                        </div>
-                        <div class="divider-2 mb-30"></div>
-                        <a href="{% url 'martApp:cart' %}" class="btn btn-fill-out btn-block mt-30 mb-40">Go back to Cart</a>
-                        
-                        <div class="table-responsive order_table checkout">
-                            <table class="table no-border">
-                                <tbody>
-                                    {% for product_id, item in cart_data.items %}
-                                    <tr>
-                                        <td class="image product-thumbnail"><img src="{{ item.image }}" alt="#"></td>
-                                        <td>
-                                            <h6 class="w-160 mb-5"><a href="{% url 'martApp:product_detail' item.pid %}" class="text-heading">{{item.title}}</a></h6></span>
-                                           
-                                        </td>
-                                        <td>
-                                            <h6 class="text-muted pl-20 pr-20">x {{ item.qty }}</h6>
-                                        </td>
-                                        <td>
-                                            <h5 class="text-muted">${{item.price}}</h5>
-                                        </td>
-
-                                        <td>
-                                            <h5 class="text-brand">${% widthratio item.price 1 item.qty %}</h5>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="payment ml-30">
-                        <h4 class="mb-30">Payment</h4>
-                        <div class="payment_option">
-                            <div class="custome-radio">
-                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="">
-                                <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
-                            </div>
-                            <div class="custome-radio">
-                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="">
-                                <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Cash on delivery</label>
-                            </div>
-                            <div class="custome-radio">
-                                <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="">
-                                <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Online Getway</label>
-                            </div>
-                        </div>
-                        <div class="payment-logo d-flex">
-                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-paypal.svg' %}" alt="">
-                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-visa.svg' %}" alt="">
-                            <img class="mr-15" src="{% static 'assets/imgs/theme/icons/payment-master.svg' %}" alt="">
-                            <img src="{% static 'assets/imgs/theme/icons/payment-zapper.svg' %}" alt="">
-                        </div>
-                        <div class="w-50">
-                            {{paypal_payment_button.render}}
-                        </div>
-                        <!-- <a href="#" class="btn btn-fill-out btn-block mt-30">Place an Order<i class="fi-rs-sign-out ml-15"></i></a> -->
-                        <!-- <form action="{% url 'martApp:place_order' %}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-fill-out btn-block mt-30">Place an Order<i class="fi-rs-sign-out ml-15"></i></button>
-                        <button type="submit" class="btn btn-fill-out btn-block mt-30">Place an Order<i class="fi-rs-sign-out ml-15"></i></button> -->
-                        <!-- </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main> --> 
-
-<!--////////////////////////////////// new code /////////////////////////////-->
-
-<main class="main">
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href="{% url 'martApp:index' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                <span></span> Shop <span></span> Checkout
-            </div>
-        </div>
-    </div>
-    <div class="container mb-80 mt-50">
-        <div class="row">
-            <div class="col-lg-8 mb-40">
-                <h1 class="heading-2 mb-10">Checkout</h1>
-                <div class="d-flex justify-content-between"></div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-7">
-                <div class="row">
-                    {% for o in order_items%}
-                        <div class="col-lg-6">
-                            <div class="card" style="max-width: 540px">
+                            {% for item in order_items %}
+                            <div class="col-lg-6">
+                                <div class="card" style="max-width: 540px">
                                     <div class="row g-0">
-                                    <div class="col-sm-4">
-                                        <img src="{{o.image}}" style="width: 100%; height: 100%; object-fit: cover" class="rounded-start" alt="Card image" />
-                                    </div>
-
-                                    <div class="col-sm-8">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{o.items}}</h5>
-                                            <p class="card-text fs-sm">{{o.qty}}</p>
-                                            <p class="card-text fs-sm">${{o.price}}</p>
-                                            <p class="card-text fs-sm">${{o.total}}</p>
+                                        <div class="col-sm-4">
+                                            <img src="{{ item.image }}" style="width: 100%; height: 100%; object-fit: cover" class="rounded-start" alt="{{ item.title }}" />
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    {% if item.pid %}
+                                                        <a href="{% url 'martApp:product_detail' item.product.pid %}">{{ item.title }}</a>
+                                                    {% else %}
+                                                        <span>{{ item.items }}</span>
+                                                    {% endif %}
+                                                    </h5>
+                                                <p class="card-text fs-sm">Qty: {{ item.qty }}</p>
+                                                <p class="card-text fs-sm">Price: ${{ item.price }}</p>
+                                                <p class="card-text fs-sm">Total: ${% widthratio item.price 1 item.qty %}</p>
+                                                <!-- <p class="card-text fs-sm">Total: ${{ item.qty|add:item.price }}</p> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor%}
-
-                </div>
-            </div>
-            <div class="col-lg-5">
-                <div class="border cart-totals mb-50">
-                    <div class="d-flex align-items-end justify-content-between mb-30">
-                        <h4>Order Summary</h4>
-                    </div>
-
-                    <div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <p class="fw-bold">Tax</p>
-                            <p>$0.00</p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <p class="fw-bold">Shipping</p>
-                            <p>$0.00</p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <p class="fw-bold">Discount</p>
-                            <p>${{order.saved}}</p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <p class="fw-bold">Total</p>
-                            <p>${{order.price}}</p>
-                        </div>
+                            {% endfor %}
                     </div>
                 </div>
-
-                <div class="row mb-50">
-                    <div class="col-lg-12">
-                        <form method="post" class="apply-coupon">
-                            {% csrf_token %}
-                            <input type="text" name="code" placeholder="Enter Coupon Code..." />
-                            <button class="btn btn-md" type="submit" name="login">Apply Coupon</button>
-                        </form>
+                <div class="col-lg-5">
+                    <div class="border cart-totals mb-50">
+                        <div class="d-flex align-items-end justify-content-between mb-30">
+                            <h4>Order Summary</h4>
+                        </div>
+                        <div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="fw-bold">Tax</p>
+                                <p>$0.00</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="fw-bold">Shipping</p>
+                                <p>$0.00</p>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <p class="fw-bold">Total</p>
+                                <p>${{ cart_total_amount }}</p>
+                            </div>
+                        </div>
                     </div>
+                    <div class="row mb-50">
+                        <div class="col-lg-12">
+                            <form method="post" action=" "class="apply-coupon">
+                                {% csrf_token %}
+                                <input type="text" name="code" placeholder="Enter Coupon Code..." />
+                                <button class="btn btn-md" type="submit">Apply Coupon</button>
+                            </form>
+                        </div>
+                    </div>
+                    <form action="{% url 'martApp:order_success' %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn w-100" style="background-color: blueviolet">Place Order</button>
+                    </form>
+                    <div id="paypal-button-container" class="mt-3"></div>
                 </div>
-
-                <button class="btn w-100" style="background-color: blueviolet">Pay With Stripe (Credit or Debit Card)</button> <br>
-                <form action="{% url 'martApp:place_order' %}" method="POST">
-                    {% csrf_token %}
-                
-                    <button class="btn w-100 mt-1" style="background-color: rgb(39, 18, 228)">Cash In Delivery</button>
-                </form>
-                    <!-- <div id="paypal-button-container" class="mt-3"></div> -->
             </div>
         </div>
-    </div>
-</main>
-
-    {% endblock content %}
+    </main>
+    
+{% endblock content %}
     
