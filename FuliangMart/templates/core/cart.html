@@ -1,3 +1,4 @@
+
 {% extends 'partials/base.html' %}
 {% load static %}
 {% block content %}
@@ -20,101 +21,114 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="table-responsive shopping-summery">
-                        <table class="table table-wishlist">
-                            <thead>
-                                <tr class="main-heading">
-                                    <th class="custome-checkbox start pl-30">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox11" value="">
-                                        <label class="form-check-label" for="exampleCheckbox11"></label>
-                                    </th>
-                                    <th scope="col">Product</th>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Unit Price</th>
-                                    <th scope="col" class="text-center">Quantity</th>
-                                    <th scope="col">Subtotal</th>
-                                    <th scope="col" class="">Refresh</th>
-                                    <th scope="col" class="end">Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for p_id, item in cart_data.items %}
-                                <tr class="pt-30">
-                                    <td class="custome-checkbox pl-30">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
-                                        <label class="form-check-label" for="exampleCheckbox1"></label>
-                                    </td>
-                                    <td class="image product-thumbnail pt-40"><img src="{{ item.image }}" alt="#"></td>
-                                    <td class="product-des product-name">
-                                        <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="{% url 'martApp:product_detail' item.pid %}">{{ item.title }}</a></h6>
-                                       
-                                    </td>
-                                    <td class="price" data-title="Price">
-                                        <h4 class="text-body">${{item.price|floatformat:2}}</h4>
-                                    </td>
-                                    <td class="text-center detail-info" data-title="Stock">
-                                        <div class="mr-15">
-                                            <input type="number" placeholder="Qty" class="w-25 product-qty-{{ p_id }}"  name="" value="{{ item.qty }}" id="">
-                                            <!-- <input type="number" placeholder="Qty" class="w-25 product-qty-{{ product_id }}"  name="" value="{{ item.qty }}" id=""> -->
-                                        </div>
-                                    </td>
-                                    <td class="price" data-title="Price">
-                                        <h4 class="text-brand">${% widthratio item.price 1 item.qty %} </h4>
-                                    </td>
-                                    <!-- <td class="action text-center" data-title="Refresh"><a href="#" class="text-body"><i class="fi-rs-refresh"></i></a></td> -->
-                                    <td class="action text-center" data-title="Remove"><button style="border: none; background: none;"  class="text-body update-product" data-product="{{ p_id }}"><i class="fi-rs-refresh"></i></button></td>
-                                    <td class="action text-center" data-title="Remove"><button style="border: none; background: none;"  class="text-body delete-product" data-product="{{ p_id }}"><i class="fi-rs-trash"></i></button></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                </div>
-                <div class="col-lg-4">
-                    <div class="border p-md-4 cart-totals ml-30">
-                        <div class="table-responsive">
-                            <table class="table no-border">
+            <form action="{% url 'martApp:save_checkout_info' %}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="table-responsive shopping-summery">
+                            <table class="table table-wishlist">
+                                <thead>
+                                    <tr class="main-heading">
+                                        
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">Unit Price</th>
+                                        <th scope="col" class="text-center">Quantity</th>
+                                        <th scope="col">Subtotal</th>
+                                        <th scope="col" class="">Refresh</th>
+                                        <th scope="col" class="end">Remove</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="cart_total_label">
-                                            <h6 class="text-muted">Subtotal</h6>
+                                    {% for product_id, item in cart_data.items %}
+                                    <tr class="pt-30">
+                                        <td class="image product-thumbnail pt-40"><img src="{{ item.image }}" alt="#"></td>
+                                        <td class="product-des product-name">
+                                            <h6 class="mb-5"><a class="product-name mb-10 text-heading" href="{% url 'martApp:product_detail' item.pid %}">{{ item.title }}</a></h6>
+                                        
                                         </td>
-                                        <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end">${{cart_total_amount|floatformat:2}}</h4>
+                                        <td class="price" data-title="Price">
+                                            <h4 class="text-body">${{item.price|floatformat:2}}</h4>
                                         </td>
+                                        <td class="text-center detail-info" data-title="Stock">
+                                            <div class="mr-15">
+                                                <input type="number" placeholder="Qty" class="w-25 product-qty-{{ product_id }}"  name="" value="{{ item.qty }}" id="">
+                                            </div>
+                                        </td>
+                                        <td class="price" data-title="Price">
+                                            <h4 class="text-brand">${% widthratio item.price 1 item.qty %} </h4>
+                                        </td>
+                                        <td class="action text-center" data-title="Remove"><a style="border: none; background: none;"  class="text-body update-product" data-product="{{ product_id }}"><i class="fi-rs-refresh"></i></a></td>
+                                        <td class="action text-center" data-title="Remove"><a style="border: none; background: none;"  class="text-body delete-product" data-product="{{ product_id }}"><i class="fi-rs-trash"></i></a></td>
                                     </tr>
-                                    <tr>
-                                        <td scope="col" colspan="2">
-                                            <div class="divider-2 mt-10 mb-10"></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="cart_total_label">
-                                            <h6 class="text-muted">Shipping</h6>
-                                        </td>
-                                        <td class="cart_total_amount">
-                                            <h5 class="text-heading text-end">Free</h4</td> </tr> <tr>
-                                       
-                                    </tr>
-                                    <tr>
-                                        <td class="cart_total_label">
-                                            <h6 class="text-muted">Total</h6>
-                                        </td>
-                                        <td class="cart_total_amount">
-                                            <h4 class="text-brand text-end">${{cart_total_amount|floatformat:2}}</h4>
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
+
+                            <div class="row mt-4">
+                                <h4 class="mb-30">Bio Data</h4>
+                                <div class="row">
+                                    <div class="form-group col-lg-12">
+                                        <label for="">Full Name</label>
+                                        <input type="text" required="" name="full_name" value="{{request.user.username|title}}" placeholder="Full Name">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Email</label>
+                                        <input type="text" required="" name="email"  placeholder="mobile *" value="{{request.user.email}}">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Mobile</label>
+                                        <input type="text" name="phone" value="{{request.user.profile.phone}}" required="" placeholder="Phone *">
+                                    </div>
+                                </div>
+                                <h4 class="mb-30">Shipping Details</h4>
+                                <div class="row">
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Address</label>
+                                        <input type="text" name="house" value="{{ active_address.address }}" placeholder="House No.">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">Road</label>
+                                        <input type="text" name="road"  placeholder="Road *" value="">
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label for="">City</label>
+                                        <input type="text" name="city" value="" placeholder="city *">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        {% if totalcartitems %}
-                        <a href="{% url 'martApp:checkout' %}" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></a>
-                        {% endif %}                    </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="border p-md-4 cart-totals ml-30">
+                            <div class="table-responsive">
+                                <div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Tax</p>
+                                        <p>$0</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Shipping</p>
+                                        <p>$0</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Discount</p>
+                                        <p>$0</p>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <p class="fw-bold">Total</p>
+                                        <p>${{cart_total_amount}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if totalcartitems %}
+                                <button type="submit" class="btn mb-20 w-100">Proceed To CheckOut<i class="fi-rs-sign-out ml-15"></i></button>
+                            {% endif %}                    
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </main>
 {% endblock content %}

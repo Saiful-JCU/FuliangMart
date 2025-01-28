@@ -6,9 +6,6 @@ from taggit.managers import TaggableManager
 from ckeditor_uploader.fields import RichTextUploadingField
 
 
-
-
-
 STATUS_CHOICE = {
     ("process", "Processing"),
     ("shipped", "Shipped"),
@@ -86,8 +83,7 @@ class Vendor(models.Model):
         return mark_safe('<img src="%s" width = "50" height = "50" />' % (self.image.url))
         
     def __str__(self):
-        return self.title
-    
+        return self.title   
 
 class Product(models.Model):
     pid = ShortUUIDField(unique = True, length = 10, max_length = 30, alphabet = "abcdefgh12345")
@@ -101,8 +97,8 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="category")
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, related_name = "product")
 
-    price = models.DecimalField(max_digits=9999999, decimal_places=2, default = "1.00")
-    old_price = models.DecimalField(max_digits=9999999, decimal_places=2, default = "2.00")
+    price = models.DecimalField(max_digits=12, decimal_places=2, default = "1.00")
+    old_price = models.DecimalField(max_digits=12, decimal_places=2, default = "2.00")
 
     type = models.CharField(max_length=100, default = "Organic", null=True, blank=True)
     stock_count = models.CharField(max_length=100, default = "10", null=True, blank=True)
@@ -150,18 +146,40 @@ class ProductImages(models.Model):
     class Meta:
         verbose_name_plural = "Product Images"
 
-
 ###################################### Cart, Order, OrderItems  ###########################
 
 class CartOrder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=9999999, decimal_places=2, default = "1.99")
+    price = models.DecimalField(max_digits=12, decimal_places=2, default = "1.99")
 
     paid_status = models.BooleanField(default=False)
     order_date = models.DateTimeField(auto_now_add=True)
 
     product_status = models.CharField(choices = STATUS_CHOICE, max_length = 10, default = "Processing")
+    sku = ShortUUIDField(null=True, blank=True, length=5, prefix = "SKU", max_length=20, alphabet="1234567890")
+    oid = ShortUUIDField(null=True, blank=True, length=5, prefix = "OID", max_length=20, alphabet="1234567890")
+
+    # billing details fields
+    full_name = models.CharField(max_length=255, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    house_address = models.CharField(max_length=255, null=True, blank=True)
+    road_name = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    saved = models.DecimalField(max_digits=12, decimal_places=2, default = "0.00")
+    shipping_method = models.CharField(max_length=100, null=True, blank=True)
+
+    traking_id = models.CharField(max_length=100, null=True, blank=True)
+    traking_website_address = models.CharField(max_length=100, null=True, blank=True)
+
+    stripe_payment_intent = models.CharField(max_length=100, null=True, blank=True)
+    coupons = models.ManyToManyField("martApp.Coupon", blank=True)
     
+    def __str__(self):
+        return f"Order #{self.id} by {self.user.username}"
+
     class Meta:
         verbose_name_plural = "Cart Order"
 
@@ -174,9 +192,9 @@ class CartOrderItems(models.Model):
     image = models.CharField(max_length = 200)
 
     qty = models.IntegerField(default = 0)
-    price = models.DecimalField(max_digits=9999999, decimal_places=2, default = "1.99")
+    price = models.DecimalField(max_digits=12, decimal_places=2, default = "1.99")
    
-    total = models.DecimalField(max_digits=9999999, decimal_places=2, default = "1.99")
+    total = models.DecimalField(max_digits=12, decimal_places=2, default = "1.99")
     
     class Meta:
         verbose_name_plural = "Cart Order Items"
@@ -228,5 +246,15 @@ class Address(models.Model):
 
     class Meta:
         verbose_name_plural = "Address"    
+
+
+class Coupon(models.Model):
+    code = models.CharField(max_length = 50)
+    discount = models.IntegerField(default = 1)
+    active = models.BooleanField(default = True)
+
+    def __str__(self):
+        return self.code
+
 
 

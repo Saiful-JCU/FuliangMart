@@ -1,5 +1,5 @@
 from django.contrib import admin
-from martApp.models import Product, Category, Vendor, CartOrder, CartOrderItems, ProductImages, Address, Wishlist, ProductReview
+from martApp.models import Product, Coupon, Category, Vendor, CartOrder, CartOrderItems, ProductImages, Address, Wishlist, ProductReview
 
 # Register your models here.
 
@@ -34,6 +34,9 @@ class AddressAdmin(admin.ModelAdmin):
     list_editable = ['address', 'status']
     list_display = ['user','address', 'status']   
 
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ['code','discount', 'active']   
+
 
 # admin.site.register(ProductImages, ProductImagesAdmin)
 admin.site.register(Product, ProductAdmin)
@@ -44,3 +47,4 @@ admin.site.register(CartOrderItems, CartOrderItemsAdmin)
 admin.site.register(Address, AddressAdmin)
 admin.site.register(Wishlist, WishlistAdmin)
 admin.site.register(ProductReview, ProductReviewAdmin)
+admin.site.register(Coupon, CouponAdmin)

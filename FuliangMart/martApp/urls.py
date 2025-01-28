@@ -1,5 +1,7 @@
 from django.urls import path, include
-from martApp.views import index, ajax_contact, contact, remove_wishlist, add_to_wishlist, wishlist_view, make_address_default, place_order, order_success, order_detail, customer_dashboard, checkout_view, update_cart, delete_item_from_cart, cart_view, add_to_cart, search_view, filter_product, product_list_view, ajax_add_review, tag_list, categories_list, category_product_list_view, vendor_list_view, vendor_detail_view, product_detail_view
+from martApp.views import index, checkout, ajax_contact, contact, remove_wishlist, add_to_wishlist, wishlist_view, make_address_default, order_success, order_detail, customer_dashboard,  update_cart, delete_item_from_cart, cart_view, add_to_cart, search_view, filter_product, product_list_view, ajax_add_review, tag_list, categories_list, category_product_list_view, vendor_list_view, vendor_detail_view, product_detail_view
+from martApp import views
+
 app_name = "martApp"
 
 urlpatterns = [
@@ -33,8 +35,9 @@ urlpatterns = [
 
     path("remove-from-wishlist/", remove_wishlist, name="remove-from-wishlist"),
 
-    path("checkout/", checkout_view, name="checkout"),
-    path('place-order/', place_order, name="place_order"),
+    # path("checkout/<str:oid>/", checkout, name="checkout"),
+    path("checkout/<oid>", checkout, name="checkout"),
+    
 
     path('order-success/', order_success, name="order_success"),
     path("dashboard/order/<int:id>", order_detail, name="order-detail"),
@@ -44,12 +47,11 @@ urlpatterns = [
 
     path("ajax-contact-form/", ajax_contact, name="ajax-contact-form"),
 
-     # paypal integrations url
-    path('paypal/', include('paypal.standard.ipn.urls')),
-    # path('payment-completed/', payment_completed_view, name="payment-completed"),
-    # path('payment-failed/', payment_failed_view, name="payment-failed"),    
-
-
     # making address default
     path('make-default-address/', make_address_default, name="make-address-default"),
+    
+    
+    # new path
+    path('save-checkout-info/', views.save_checkout_info, name="save_checkout_info"),
+    
 ]
