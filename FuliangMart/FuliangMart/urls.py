@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("martApp.urls")),
     path("user/", include("userauths.urls")),
+    path("useradmin/", include("useradmin.urls")),
 
     # this is for ckeditor app for customize web text(like product: title, descriptions etc) editor
     path("ckeditor/", include("ckeditor_uploader.urls"))
