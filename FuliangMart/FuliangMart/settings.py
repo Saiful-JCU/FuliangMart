@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     # third party app
     'taggit',
     'ckeditor',
+    'bootstrap4',
+    'django.contrib.humanize',
 
     # payment integration
     # 'paypal.standard.ipn',
