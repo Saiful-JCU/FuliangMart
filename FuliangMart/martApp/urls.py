@@ -54,4 +54,9 @@ urlpatterns = [
     # new path
     path('save-checkout-info/', views.save_checkout_info, name="save_checkout_info"),
     
+    path('privacy_policy/', views.privacy_policy, name="privacy_policy"),
+    path('purchase_guide/', views.purchase_guide, name="purchase_guide"),
+    path('terms_of_service/', views.terms_of_service, name="terms_of_service"),
+    path('about_us/', views.about_us, name="about_us"),
+    
 ]

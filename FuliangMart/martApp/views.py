@@ -26,6 +26,7 @@ def index(request):
     # product = Product.objects.all().order_by("-id")
     product = Product.objects.filter(featured=True, product_status="published").order_by("-id")
 
+    print("Featured Product Count:", product.count())  # Debugging line
     context = {
         "product": product
     }
@@ -227,7 +228,6 @@ def add_to_cart(request):
             cart_data = request.session['cart_data_obj']
             cart_data[str(request.GET['id'])]['qty'] = int(cart_product[str(request.GET['id'])]['qty'])
             # cart_data[product_id]['qty'] +=int(request.GET['qty'])
-            # cart_data.update(cart_data) # this line is removeable
             request.session['cart_data_obj'] = cart_data
         else:
             cart_data = request.session['cart_data_obj']
@@ -284,7 +284,7 @@ def delete_item_from_cart(request):
         'cart_total_amount': cart_total_amount
     })
 
-
+@login_required
 def update_cart(request):
     product_id = str(request.GET.get('id'))  
     product_qty = int(request.GET.get('qty'))  
@@ -395,7 +395,7 @@ def save_checkout_info(request):
         return redirect("martApp:checkout", order.oid)
     return redirect("martApp:checkout", order.oid)
 
-
+@login_required
 def checkout(request, oid):
     order = CartOrder.objects.get(oid=oid)
     order_items = CartOrderItems.objects.filter(order=order)
@@ -504,7 +504,7 @@ def order_detail(request, id):
     }
     return render(request, 'core/order-detail.html', context)
 
-
+@login_required
 def make_address_default(request):
     id = request.GET['id']
     Address.objects.update(status = False)
@@ -571,6 +571,7 @@ def contact(request):
     return render(request, 'core/contact.html')
 
 
+@login_required
 def ajax_contact(request):
     full_name = request.GET['full_name']
     email = request.GET['email']
@@ -593,12 +594,24 @@ def ajax_contact(request):
 
     return JsonResponse({"content":content})
 
-
+@login_required
 def profile_edit(request):
     return render(request, )
 
 
+def privacy_policy(request):
+    return render(request, "core/privacy_policy.html")
 
+
+def purchase_guide(request):
+    return render(request, "core/purchase_guide.html")
+
+
+def terms_of_service(request):
+    return render(request, "core/terms_of_service.html")
+
+def about_us(request):
+    return render(request, "core/about_us.html")
 
 
 
