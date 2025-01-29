@@ -132,10 +132,10 @@
                     <div class="col-xl-3 col-lg-4">
                         <div class="header-info">
                             <ul>
-                                <li><a href="">About Us</a></li> 
-                                <li><a href="">My Account</a></li>
-                                <li><a href="">Wishlist</a></li>
-                                <li><a href="">Order Tracking</a></li>
+                                <li><a href="{% url 'martApp:about_us' %}">About Us</a></li> 
+                                <li><a href="/">My Account</a></li>
+                                <li><a href="/">Wishlist</a></li>
+                                <li><a href="/">Order Tracking</a></li>
                             </ul>
                         </div>
                     </div>
@@ -420,12 +420,12 @@
                                     <li>
                                         <a href="#">Pages <i class="fi-rs-angle-down"></i></a>
                                         <ul class="sub-menu">
-                                            <li><a href="/">About Us</a></li>
+                                            <li><a href="{% url 'martApp:about_us' %}">About Us</a></li>
                                             <li><a href="{% url 'martApp:contact' %}">Contact</a></li>
-                                            <li><a href="/">My Dashboard</a></li>
-                                            <li><a href="/">Purchase Guide</a></li>
-                                            <li><a href="/">Privacy Policy</a></li>
-                                            <li><a href="/">Terms of Service</a></li>
+                                            <li><a href="{% url 'martApp:dashboard' %}">My Dashboard</a></li>
+                                            <li><a href="{% url 'martApp:purchase_guide' %}">Purchase Guide</a></li>
+                                            <li><a href="{% url 'martApp:privacy_policy' %}">Privacy Policy</a></li>
+                                            <li><a href="{% url 'martApp:terms_of_service' %}">Terms of Service</a></li>
                                         </ul>
                                     </li>
                                     <li>

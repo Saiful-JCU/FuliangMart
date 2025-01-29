@@ -3003,10 +3003,10 @@
                             
                             {% for c in categories %}
                             <li>
-                                <a href="{% url 'martApp:category-product-list' c.cid %}"> <img src="{{ c.image.url }}" alt="" style="width: 30px; height: 30px; object-fit: cover; border-radius: 10px;" />{{c.title}}</a><span class="count">{{product.count}}</span>
+                                <a href="{% url 'martApp:category-product-list' c.cid %}"> <img src="{{ c.image.url }}" alt="" style="width: 30px; height: 30px; object-fit: cover; border-radius: 10px;" />{{c.title}}</a><span class="count hidden"></span>
                             </li>
                             {% endfor %}
-                            <li><a href="{% url 'martApp:categories' %}"> All Categories </a><span class="count">{{category.count}}</span>
+                            <li><a href="{% url 'martApp:categories' %}"> All Categories </a><span class="count"></span>
                             </li>
                             
                         </ul>
