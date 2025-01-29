@@ -42,10 +42,11 @@ def product_list_view(request):
 
 def categories_list(request):
     categories = Category.objects.all()
-    # categories = Category.objects.all().annotate(product_count=Count("product"))
+    # cat_count = Category.objects.all().annotate(product_count=Count("product"))
 
     context = {
-        "categories": categories
+        "categories": categories,
+        # "cat_count": cat_count,
     }
     return render(request, "core/category-list.html", context)
 
